@@ -88,7 +88,7 @@ def home():
     for group,sub,indices in [('Введение','Сначала — вопрос к данным',[0]),('Python','От переменной до файла',range(1,8)),('NumPy','Числа в массивах',[8])]:
         body+='<div class="group"><div><h3>'+group+'</h3><span class="muted">'+sub+'</span></div><div class="lessons">'
         for i in indices:
-            body+=f'<a data-lesson="{e(tags[i])}" href="{lesson_url(i)}"><span class="num">{i+1:02}</span><span><strong>{e(course[i]["title"])}</strong><span class="blurb">{e(descriptions[i])}</span></span><span class="lesson-format">Урок и практика</span></a>'
+            body+=f'<a data-lesson="{e(tags[i])}" href="{lesson_url(i)}"><span class="num">{i+1:02}</span><span><strong>{e(course[i]["title"])}</strong><span class="blurb">{e(descriptions[i])}</span></span></a>'
         body+='</div></div>'
     body+='</section><section class="panel"><div><div class="eyebrow">Практикум · NumPy</div><h2>Как массив складывается по осям?</h2>'+p('Посчитайте фишки сначала по рядам, затем по столбцам. Сравните два результата и проверьте, что именно делает axis=0.')+link(lesson_url(8)+'#axis-demo','Открыть практикум','btn primary')+'</div><img src="assets/array.jpg" width="1020" height="680" loading="lazy" alt="Шесть ячеек с фишками, расположенными в два ряда по три."></section>'
     body+='<section class="home-book"><h2>Материалы группы</h2>'+p('Откройте папку преподавателя с материалами занятий. Блокноты для работы в Colab и главы книг также доступны на странице каждой темы.')+link(DRIVE,'Материалы на Google Диске','small-link')+'</section>'
