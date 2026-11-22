@@ -1,0 +1,126 @@
+{
+  "1": {
+    "title": "Сначала уточните задачу",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/problem_solving.md#L9",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "I want a program which creates a backup of all my important files.",
+      "Although, this is a simple problem, there is not enough information for us to get started with the solution. A little more analysis is required. For example, how do we specify which files are to be backed up? How are they stored? Where are they stored?"
+    ],
+    "translation": "«Мне нужна программа, которая создаёт резервную копию всех моих важных файлов». Хотя задача проста, сведений для начала работы недостаточно. Нужен дополнительный анализ. Например, как указать, какие файлы копировать? В каком виде они будут храниться? Где они будут храниться?",
+    "note": "В исследовании запрос «посчитай успеваемость» такой же неполный. Сначала запишите, чьи результаты берёте, за какой период и что делать с пропусками. Две разные договорённости о пропуске могут дать два разных средних при одинаковом коде."
+  },
+  "2": {
+    "title": "Почему пробелы могут менять смысл",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/basics.md#L407",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "Whitespace is important in Python. Actually, whitespace at the beginning of the line is important. This is called indentation. Leading whitespace (spaces and tabs) at the beginning of the logical line is used to determine the indentation level of the logical line, which in turn is used to determine the grouping of statements.",
+      "This means that statements which go together must have the same indentation. Each such set of statements is called a block. We will see examples of how blocks are important in later chapters."
+    ],
+    "translation": "Пробелы в Python имеют значение. Если точнее, важны пробельные символы в начале строки. Это называется отступом. Начальные пробелы или табуляции определяют уровень отступа логической строки, а от уровня зависит, какие инструкции окажутся в одной группе. Инструкции, составляющие такую группу, должны иметь одинаковый отступ. Такая группа называется блоком. Примеры с блоками встретятся в следующих главах.",
+    "note": "Для первых вычислений пишите команды у левого края. Когда на следующем занятии появится if, попробуйте сдвинуть строку с print внутрь ветки и обратно. Проверяйте не только число, но и то, при каких входах программа вообще его печатает."
+  },
+  "3": {
+    "title": "Когда программа выбирает действие",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/control_flow.md#L3",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "In the programs we have seen till now, there has always been a series of statements faithfully executed by Python in exact top-down order. What if you wanted to change the flow of how it works? For example, you want the program to take some decisions and do different things depending on different situations, such as printing 'Good Morning' or 'Good Evening' depending on the time of the day?",
+      "The if statement is used to check a condition: if the condition is true, we run a block of statements (called the if-block), else we process another block of statements (called the else-block). The else clause is optional."
+    ],
+    "translation": "До сих пор Python выполнял инструкции последовательно, сверху вниз. А если вы хотите изменить порядок выполнения? Допустим, программа должна принимать решения и по-разному действовать в разных ситуациях: выводить «Доброе утро» или «Добрый вечер» в зависимости от времени суток. Инструкция if проверяет условие. Если оно истинно, выполняется один блок инструкций, блок if. Иначе выполняется другой, блок else. Часть else необязательна.",
+    "note": "Нарисуйте две дорожки для условия total >= 5000. Проведите по ним два заказа: ровно 5000 и 4999. Отметьте первую строку, на которой пути расходятся, и первую строку после ветвления, на которой снова встречаются."
+  },
+  "4": {
+    "title": "Что именно возвращает range",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/control_flow.md#L91",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "In this program, we are printing a sequence of numbers. We generate this sequence of numbers using the built-in range function.",
+      "What we do here is supply it two numbers and range returns a sequence of numbers starting from the first number and up to the second number. For example, range(1,5) gives the sequence [1, 2, 3, 4]. By default, range takes a step count of 1. If we supply a third number to range, then that becomes the step count. For example, range(1,5,2) gives [1,3]. Remember that the range extends up to the second number i.e. it does not include the second number."
+    ],
+    "translation": "В этом примере мы печатаем последовательность чисел. Она создаётся встроенной функцией range. Мы передаём ей два числа и получаем последовательность от первого числа до второго. Например, range(1, 5) даёт значения 1, 2, 3, 4. По умолчанию шаг равен единице. Если передать третье число, оно станет шагом. Так, range(1, 5, 2) даёт 1 и 3. Вторая граница задаёт остановку и сама в последовательность не входит.",
+    "note": "Если нужно подписать пять рабочих дней числами с 1 по 5, укажите range(1, 6). Если нужно пройти по пяти позициям списка, подойдёт range(5), потому что первая позиция нулевая. В обеих задачах пять шагов, но подписи у них разные."
+  },
+  "5": {
+    "title": "Зачем давать вычислению имя",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/functions.md#L3",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "Functions are reusable pieces of programs. They allow you to give a name to a block of statements, allowing you to run that block using the specified name anywhere in your program and any number of times. This is known as calling the function. We have already used many built-in functions such as len and range."
+    ],
+    "translation": "Функции — это части программы, которые можно использовать повторно. Они позволяют дать имя блоку инструкций и выполнять этот блок по имени в любом месте программы столько раз, сколько понадобится. Такое действие называют вызовом функции. Нам уже встречались встроенные функции, например len и range.",
+    "note": "В расчёте выручки есть два действия: описать правило и применить его к конкретным числам. Если определить def revenue(price, qty), значение ещё не вычислено. При вызове revenue(60, 3) параметры получат аргументы, а возвращаемый результат можно присвоить переменной или проверить через assert."
+  },
+  "6": {
+    "title": "Словарь как адресная книга",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/data_structures.md#L83",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "A dictionary is like an address-book where you can find the address or contact details of a person by knowing only his/her name i.e. we associate keys (name) with values (details). Note that the key must be unique just like you cannot find out the correct information if you have two persons with the exact same name.",
+      "Pairs of keys and values are specified in a dictionary by using the notation d = {key1 : value1, key2 : value2 }. Notice that the key-value pairs are separated by a colon and the pairs are separated themselves by commas and all this is enclosed in a pair of curly braces."
+    ],
+    "translation": "Словарь похож на адресную книгу: зная имя человека, можно найти его адрес или другие контактные сведения. Иначе говоря, мы связываем ключи (имена) со значениями (сведениями). Ключ должен быть уникальным, иначе по одному и тому же имени невозможно определить, чьи сведения нужны. Пары ключей и значений записывают как d = {key1: value1, key2: value2}. Ключ и значение разделяет двоеточие, отдельные пары разделяют запятыми, вся запись заключена в фигурные скобки.",
+    "note": "В реестре группы два человека могут иметь одинаковое имя. Поэтому удобно взять номер студенческого билета ключом, а имя сохранить как значение. Попробуйте дважды присвоить новое значение одному ключу: число записей останется прежним."
+  },
+  "7": {
+    "title": "Что принадлежит классу, а что объекту",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/oop.md#L5",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "Classes and objects are the two main aspects of object oriented programming. A class creates a new type where objects are instances of the class. An analogy is that you can have variables of type int which translates to saying that variables that store integers are variables which are instances (objects) of the int class.",
+      "Objects can store data using ordinary variables that belong to the object. Variables that belong to an object or class are referred to as fields. Objects can also have functionality by using functions that belong to a class. Such functions are called methods of the class. This terminology is important because it helps us to differentiate between functions and variables which are independent and those which belong to a class or object. Collectively, the fields and methods can be referred to as the attributes of that class."
+    ],
+    "translation": "Классы и объекты — два основных понятия объектно-ориентированного программирования. Класс создаёт новый тип, а объекты являются экземплярами этого класса. Например, переменная с целым числом ссылается на экземпляр класса int. Объект может хранить данные в переменных, которые ему принадлежат. Переменные объекта или класса называют полями. Объекты также получают поведение через функции, принадлежащие классу. Такие функции называют методами. Эти слова позволяют различать самостоятельные функции и переменные и те, что относятся к классу или объекту. Поля и методы вместе называют атрибутами класса.",
+    "note": "У объекта корзины есть состояние, например список товаров, и действие add. Создайте две корзины. Если добавление фрукта в первую меняет длину второй, ищите общий список. Название класса одинаковое, а данные каждой корзины должны оставаться собственными."
+  },
+  "8": {
+    "title": "Как отличить пустую строку от конца файла",
+    "book": "A Byte of Python",
+    "author": "Swaroop Chitlur",
+    "source": "https://github.com/swaroopch/byte-of-python/blob/84f4dd8d6f09836fa58226eaafe922b8a7baabc6/io.md#L51",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "original": [
+      "Next, we open the same file again for reading. We don't need to specify a mode because 'read text file' is the default mode. We read in each line of the file using the readline method in a loop. This method returns a complete line including the newline character at the end of the line. When an empty string is returned, it means that we have reached the end of the file and we 'break' out of the loop.",
+      "In the end, we finally close the file."
+    ],
+    "translation": "Затем откроем тот же файл для чтения. Указывать режим необязательно: по умолчанию текстовый файл открывается для чтения. В цикле будем считывать по одной строке методом readline объекта файла. Метод возвращает строку целиком вместе с символом перевода строки в конце, если он есть. Когда возвращается пустая строка, мы достигли конца файла и выходим из цикла через break. В конце файл закрывается.",
+    "note": "Пустая строка внутри текстового файла может состоять из одного символа переноса. В Python её представление — `\"\\n\"`. В конце файла readline возвращает `\"\"`. Если сначала вызвать strip(), то эти два разных случая совпадут. Для обычного чтения всех строк удобно писать with open(...) as f и for line in f."
+  },
+  "9": {
+    "title": "Когда два массива видят одни и те же данные",
+    "book": "Scientific Python Lectures",
+    "author": "Scientific Python developers",
+    "source": "https://lectures.scientific-python.org/intro/numpy/array_object.html#copies-and-views",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "original": [
+      "A slicing operation creates a view on the original array, which is just a way of accessing array data."
+    ],
+    "translation": "Операция среза создаёт представление исходного массива. Это способ обратиться к данным самого массива.",
+    "note": "Возьмите a = np.array([7, 8, 9]) и b = a[1:]. Если присвоить b[0] = 50, то a станет [7, 50, 9]. Начало b совпадает с позицией 1 в исходных данных. Теперь повторите опыт с b = a[1:].copy(): у копии своя память, поэтому замена в b не затронет a."
+  }
+}

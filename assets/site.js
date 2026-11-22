@@ -75,3 +75,34 @@ if (axis) {
     axis.querySelector("output").textContent = "A.sum(axis=" + button.dataset.axis + ") = [" + groups.map(sum).join(", ") + "]. " + groups.map(g=>g.join(" + ")+" = "+sum(g)).join(". ") + ". " + (byColumn ? "Остался один итог на каждый из трёх столбцов." : "Остался один итог на каждый из двух рядов.");
   }));
 }
+const normalType = document.querySelector("#normal-type");
+if (normalType) {
+  const article = document.querySelector(".reading");
+  const largeType = document.querySelector("#large-type");
+  const setType = large => {
+    article.classList.toggle("type-large", large);
+    normalType.setAttribute("aria-pressed", String(!large));
+    largeType.setAttribute("aria-pressed", String(large));
+    try { localStorage.setItem("braincode-reading-size", large ? "large" : "normal"); } catch {}
+  };
+  try { setType(localStorage.getItem("braincode-reading-size") === "large"); } catch {}
+  normalType.addEventListener("click",()=>setType(false));
+  largeType.addEventListener("click",()=>setType(true));
+}
+const chapterNav = [...document.querySelectorAll(".rail a")].map(link=>[link,document.getElementById(link.hash.slice(1))]).filter(pair=>pair[1]);
+if (chapterNav.length) {
+  let scheduled=false;
+  function locate() {
+    scheduled=false;
+    let found=chapterNav[0][0];
+    for (const [link,section] of chapterNav) {
+      if (section.getBoundingClientRect().top <= Math.min(window.innerHeight*.3,180)) found=link;
+    }
+    for (const [link] of chapterNav) {
+      if (link===found) link.setAttribute("aria-current","location");
+      else link.removeAttribute("aria-current");
+    }
+  }
+  window.addEventListener("scroll",()=>{if (!scheduled){scheduled=true;requestAnimationFrame(locate);}}, {passive:true});
+  locate();
+}
