@@ -1,23 +1,76 @@
 "use strict";
 
-const search = document.querySelector("#lesson-search");
-if (search) {
-  search.addEventListener("input", () => {
-    const normalize = value => value.toLocaleLowerCase("ru").replaceAll("ё", "е").trim();
-    const terms = normalize(search.value).split(/\s+/);
-    const cards = [...document.querySelectorAll("[data-lesson]")];
-    for (const card of cards) {
-      const words = normalize(card.textContent + " " + card.dataset.lesson);
-      card.hidden = !terms.every(term => words.includes(term));
+if (document.body.dataset.page === "home") {
+  function followOldBookmark() {
+    const destination = document.getElementById(location.hash.slice(1))?.dataset.movedTo;
+    if (destination) location.replace(destination);
+  }
+  followOldBookmark();
+  window.addEventListener("hashchange", followOldBookmark);
+}
+
+const tools = document.querySelector("#catalog-tools");
+if (tools) {
+  const field = tools.querySelector("input");
+  const filters = [...tools.querySelectorAll("[data-module]")];
+  const modules = [...document.querySelectorAll(".module")];
+  const reset = document.querySelector("#reset-search");
+  const status = document.querySelector("#found");
+  const normalize = text => text.toLocaleLowerCase("ru").replaceAll("ё", "е").trim();
+  let selected = "";
+
+  function applyFilters() {
+    const query = normalize(field.value);
+    const terms = query.split(/\s+/).filter(Boolean);
+    let total = 0;
+    for (const module of modules) {
+      let matches = 0;
+      for (const item of module.querySelectorAll("[data-lesson]")) {
+        const text = normalize([module.querySelector("h2").textContent, item.textContent, item.dataset.lesson].join(" "));
+        const visible = (!selected || selected === module.id) && terms.every(term => text.includes(term));
+        item.hidden = !visible;
+        if (visible) matches++;
+      }
+      module.hidden = matches === 0;
+      total += matches;
     }
-    for (const group of document.querySelectorAll(".group")) {
-      group.hidden = !group.querySelector("[data-lesson]:not([hidden])");
+    for (const button of filters) button.setAttribute("aria-pressed", String(button.dataset.module === selected));
+    reset.hidden = !query && !selected;
+    status.textContent = total ? "Занятий: " + total : "Ничего не найдено. Измените запрос или сбросьте фильтры.";
+  }
+  field.addEventListener("input", applyFilters);
+  for (const button of filters) button.addEventListener("click", () => {
+    selected = button.dataset.module;
+    applyFilters();
+  });
+  reset.addEventListener("click", () => {
+    selected = "";
+    field.value = "";
+    applyFilters();
+    field.focus();
+  });
+  tools.hidden = false;
+  applyFilters();
+}
+
+const sectionMenu = document.querySelector(".section-menu");
+if (sectionMenu) {
+  const smallScreen = window.matchMedia("(max-width: 800px)");
+  const setLayout = () => { sectionMenu.open = !smallScreen.matches; };
+  setLayout();
+  smallScreen.addEventListener("change", setLayout);
+  sectionMenu.querySelector("nav").addEventListener("click", event => {
+    const anchor = event.target.closest("a");
+    if (!anchor || !smallScreen.matches) return;
+    sectionMenu.open = false;
+    const section = document.getElementById(anchor.hash.slice(1));
+    if (section) {
+      section.tabIndex = -1;
+      section.focus({preventScroll:true});
     }
-    const count = cards.filter(card => !card.hidden).length;
-    document.querySelector("#found").textContent = count ? "Найдено занятий: " + count : "Занятий по этому запросу нет. Попробуйте «циклы», «массив» или номер занятия.";
-    document.querySelector("#found").classList.toggle("sr", count > 0);
   });
 }
+
 document.querySelectorAll(".codebar button").forEach(button => {
   button.addEventListener("click", async () => {
     const code = button.closest(".codebox").querySelector("code");
@@ -77,6 +130,7 @@ if (axis) {
 }
 const normalType = document.querySelector("#normal-type");
 if (normalType) {
+  normalType.closest(".reader-tools").hidden = false;
   const article = document.querySelector(".reading");
   const largeType = document.querySelector("#large-type");
   const setType = large => {

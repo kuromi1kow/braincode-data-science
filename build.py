@@ -1,41 +1,26 @@
 """Generate the buildless GitHub Pages edition from student-facing course sources."""
-from html import escape
+from course_ui import CATALOG, DRIVE, catalog, section_menu, e, home, link, page
 import json
 from pathlib import Path
 import re
 
 BASE = Path(__file__).resolve().parent
-DRIVE = "https://drive.google.com/drive/folders/1K83MMSPBBTlHrZSS0A0OPjuO8QI8KvS7"
-REPO = "https://github.com/kuromi1kow/braincode-data-science"
 COLAB = "https://colab.research.google.com/github/kuromi1kow/braincode-data-science/blob/main/notebooks/"
 def read(name):
     return json.loads((BASE / "src" / (name + ".json")).read_text(encoding="utf-8"))
 course, cases, walks, books, primers = map(read, ("course","cases","walkthroughs","books","primers"))
 folders, resources, deep = map(read, ("folders", "resources", "chapters"))
 labs, excerpts = map(read, ("labs", "excerpts"))
-tags = ["данные анализ доля конверсия эксперимент", "print строки ввод числа переменные типы", "if elif else логика условие bool", "for while range цикл накопитель", "def return функция аргументы", "list dict set tuple словарь список кортеж множества", "class self объект класс ООП", "csv json файлы ошибки исключения", "numpy ndarray оси массив маска axis shape broadcast"]
-descriptions = ["Как превратить вопрос в измерение и проверить свой вывод.", "Первая ячейка, переменные и арифметика на примере чека.", "Ветвление, логические выражения и проверка на границе.", "Обход списка, накопитель суммы и условие остановки.", "Параметры, область видимости и возвращаемое значение.", "Списки, словари, множества и кортежи на примере клиентов.", "Состояние объекта, методы и независимые экземпляры.", "Как прочитать CSV, сохранить JSON и учесть ошибки.", "Форма массива, индексы, маски и вычисления по осям."]
-def e(value):
-    return escape(str(value), quote=True)
 def prose(text):
     return re.sub(r'`([^`]+)`',r'<code>\1</code>', e(text))
 def p(text):
     return '<p>'+prose(text)+'</p>'
 def listing(items,kind="ul"):
     return f'<{kind} class="exercise">'+''.join('<li>'+prose(x)+'</li>' for x in items)+f'</{kind}>'
-def link(url,label,cls=""):
-    return f'<a href="{e(url)}" class="{e(cls)}">{e(label)}</a>'
 def code(source):
     return '<div class="codebox"><div class="codebar"><span>Python</span><button type="button" aria-label="Скопировать пример кода">Скопировать</button></div><pre><code>'+e(source.rstrip())+'</code></pre></div>'
 def reveal(label,body):
     return '<details><summary>'+e(label)+'</summary>'+body+'</details>'
-def page(title,body,depth="",description="Русскоязычные уроки Data Science для студентов Tech Orda / BrainCode."):
-    home=depth+'index.html'
-    nav=link(home+'#lessons','Занятия')+link(depth+'books.html','Книги')+link(depth+'materials.html','Материалы')+link(DRIVE,'Google Диск','drive')
-    return f'''<!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#303fa0"><meta name="description" content="{e(description)}"><title>{e(title)} · Tech Orda / BrainCode</title><link rel="icon" href="data:,"><link rel="stylesheet" href="{depth}assets/style.css"><script src="{depth}assets/site.js" defer></script></head>
-<body><a class="skip" href="#content">К содержанию</a><header class="mast"><div class="wrap"><a class="brand" href="{home}"><strong>BrainCode</strong><span class="partners">Astana Hub <span aria-hidden="true">·</span> Tech Orda</span></a><nav aria-label="Навигация курса">{nav}</nav></div></header><main id="content" class="wrap">{body}</main>
-<footer class="foot"><div class="wrap"><p>Data Science · Tech Orda / BrainCode<br>Материалы преподавателя · Assylkhan Geniyat</p><nav aria-label="Ссылки на материалы">{link(home,'Курс')}{link(DRIVE,'Google Диск')}{link(REPO,'GitHub')}</nav></div></footer></body></html>'''
 def lesson_url(i):
     return f"lessons/{course[i]['slug']}.html"
 def chapter_links(items, with_book=False):
@@ -61,10 +46,13 @@ def setup(i):
     return ''
 def lesson(i,t):
     case=cases[f'{i:02}']; primer=primers[i]; num=i+1
-    body='<header class="lesson-head"><div class="eyebrow">'+link('../index.html#lessons','Все занятия')+f' &nbsp;/&nbsp; Занятие {num:02}</div><h1>'+e(t['title'])+'</h1><p class="intro">'+e(descriptions[i])+'</p><div class="actions">'+link(COLAB+t['notebook'],'Открыть в Colab','btn primary')+link('#practice','К практике','btn')+'</div></header>'
+    assignment = t.get('exercise_collection')
+    homework_link = link('#numpy-homework', 'ДЗ · 100 упражнений', 'btn') if assignment else ''
+    body='<header class="lesson-head"><div class="eyebrow">'+link('index.html','Программа')+f' &nbsp;/&nbsp; Занятие {num:02}</div><h1>'+e(t['title'])+'</h1><p class="intro">'+e(t['summary'])+'</p><div class="actions">'+link(COLAB+t['notebook'],'Открыть в Colab','btn primary')+link('#practice','К практике','btn')+homework_link+'</div></header>'
     titles=[('start','С чего начать'),('book-text','Из книги'),('case','Разбор задачи'),('deeper','Подробный разбор'),('code','Код по шагам'),('workshop','Лаборатория'),('practice','Практика и ДЗ'),('quiz','Самопроверка'),('reading','Что почитать')]
-    nav='<aside class="rail"><div class="smallcap">В этом занятии</div>'+''.join(link('#'+a,b) for a,b in titles)+'</aside>'
-    nav=nav.removesuffix('</aside>') + '<div class="reader-tools"><span class="smallcap">Размер текста</span><div class="type-buttons"><button id="normal-type" aria-pressed="true" type="button">Обычный</button><button id="large-type" aria-pressed="false" type="button">Крупный</button></div></div></aside>'
+    if assignment:
+        titles.insert(-2, ('numpy-homework', 'ДЗ · 100 упражнений'))
+    nav = section_menu(titles, reader=True)
     start=p(t['why'])+'<h3>'+e(primer[0])+'</h3>'+p(primer[1])+p(primer[2])+'<dl>'+''.join('<dt class="term">'+e(primer[j])+'</dt><dd>'+prose(primer[j+1])+'</dd>' for j in (3,5,7))+'</dl>'+setup(i)
     body+='<div class="layout">'+nav+'<article class="reading">'+section('start','С чего начать',start)
     body+=section('book-text','Читаем фрагмент книги',book_text(excerpts[str(num)]))
@@ -92,29 +80,24 @@ def lesson(i,t):
     if (BASE/'notebooks'/(t['slug']+'-lab.ipynb')).exists():
         practice+='<h3>Для дополнительной тренировки</h3>'+p('Если основной пример уже получился, откройте ещё один набор задач по той же теме.')+link(COLAB+t['slug']+'-lab.ipynb','Практикум')+' · '+link(COLAB+t['slug']+'-homework.ipynb','Самостоятельная работа')
     body+=section('practice','Практика и домашнее задание',practice)
+    if assignment:
+        notebook = assignment['notebook']
+        instructions = listing(assignment['steps'], 'ol')
+        actions = link(COLAB + notebook, 'Решать в Google Colab', 'btn primary')
+        actions += link('../notebooks/' + notebook, 'Скачать блокнот .ipynb', 'btn', download=True)
+        source = link(assignment['source'], 'Оригинальный практикум на GitHub')
+        body += section('numpy-homework', assignment['title'],
+                        p(assignment['intro']) + instructions + '<div class="actions">' +
+                        actions + '</div><p>' + source + ' · Русская редакция Александра Соколова.</p>')
     body+=section('quiz','Самопроверка',''.join(reveal(q,p(a)) for q,a in zip(t['quiz'],t['answers']))+'<h3>Где легко ошибиться</h3>'+listing(t['errors']))
     pick=[(b,c) for b in books for c in b['chapters'] if num in c['lessons']]
     recommended=[r for group in resources for r in group['items'] if num in r['lessons']]
     extras=('<h3>Ссылки от преподавателя</h3>'+resource_links(recommended)) if recommended else ''
     body+=section('reading','Что почитать',chapter_links(pick,True)+'<h3>Документация</h3>'+'<ul>'+''.join('<li>'+link(url,label)+'</li>' for label,url in t['sources'])+'</ul>'+link('../books.html','Вся книжная полка')+extras)
-    prev=link(course[i-1]['slug']+'.html','Предыдущее занятие') if i else link('../index.html','К программе')
-    nxt=link(course[i+1]['slug']+'.html','Далее · '+course[i+1]['title']) if i+1<len(course) else link('../index.html#lessons','Вернуться к программе')
-    return page(t['title'],body+'<nav class="pager" aria-label="Между занятиями">'+prev+nxt+'</nav></article></div>','../',descriptions[i])
+    prev=link(course[i-1]['slug']+'.html','Назад · '+course[i-1]['title']) if i else link('index.html','К программе')
+    nxt=link(course[i+1]['slug']+'.html','Далее · '+course[i+1]['title']) if i+1<len(course) else link('index.html','Вернуться к программе')
+    return page(t['title'],body+'<nav class="pager" aria-label="Между занятиями">'+prev+nxt+'</nav></article></div>',active='lesson',depth='../',description=t['summary'])
 
-def home():
-    first=lesson_url(0)
-    body='<section class="hero"><div><p class="eyebrow">Курс для студентов академии</p><h1>Data <span>Science</span></h1><p class="intro">От первого вопроса к данным до вычислений на Python и NumPy. Девять занятий с примерами, практикой и чтением.</p><div class="actions">'+link(first,'Начать с введения','btn primary')+link('books.html','Книжная полка','btn')+'</div></div><figure class="herofigure"><img src="assets/study.jpg" width="1200" height="800" alt="Руки студента с карандашом над столбчатой диаграммой в тетради в клетку."><figcaption>Рабочая тетрадь по анализу данных · Иллюстрация курса</figcaption></figure></section>'
-    body+='<nav class="learningpath" aria-label="Разделы курса">'+''.join('<a href="#track-'+str(first)+'"><span class="smallcap">'+sub+'</span><strong>'+name+'</strong><span>'+desc+'</span></a>' for first,sub,name,desc in [(1,'Занятие 01','Введение','От вопроса к наблюдению'),(2,'Занятия 02–08','Python','Пишем и проверяем код'),(9,'Занятие 09','NumPy','Работаем с массивами')])+'</nav>'
-    body+='''<section id="lessons" class="catalog"><div class="sectop"><div><p class="eyebrow">Программа курса</p><h2>Занятия</h2></div><label class="search"><span class="sr">Найти занятие по теме</span><input id="lesson-search" type="search" placeholder="Найти тему или занятие"></label></div><p id="found" class="sr" role="status"></p>'''
-    for group,sub,indices in [('Введение','Сначала — вопрос к данным',[0]),('Python','От переменной до файла',range(1,8)),('NumPy','Числа в массивах',[8])]:
-        body+='<div class="group" id="track-'+str(indices[0]+1)+'"><div><h3>'+group+'</h3><span class="muted">'+sub+'</span></div><div class="lessons">'
-        for i in indices:
-            body+=f'<a data-lesson="{e(tags[i])}" href="{lesson_url(i)}"><span class="num">{i+1:02}</span><span><strong>{e(course[i]["title"])}</strong><span class="blurb">{e(descriptions[i])}</span></span></a>'
-        body+='</div></div>'
-    body+='</section><section class="panel"><div><div class="eyebrow">Практикум · NumPy</div><h2>Как массив складывается по осям?</h2>'+p('Посчитайте фишки сначала по рядам, затем по столбцам. Сравните два результата и проверьте, что именно делает axis=0.')+link(lesson_url(8)+'#axis-demo','Открыть практикум','btn primary')+'</div><img src="assets/array.jpg" width="1020" height="680" loading="lazy" alt="Шесть ячеек с фишками, расположенными в два ряда по три."></section>'
-    body+='<section class="home-book"><h2>Материалы группы</h2>'+p('Откройте папку преподавателя с материалами занятий. Блокноты для работы в Colab и главы книг также доступны на странице каждой темы.')+'<div class="actions">'+link('materials.html','Открыть подборку','btn primary')+link(DRIVE,'Материалы на Google Диске','btn')+'</div></section>'
-    body+='<p class="attribution">В учебнике прямо на страницах приведены переводы и фрагменты двух открытых изданий. '+link('https://python.swaroopch.com/','Swaroop Chitlur · оригинал A Byte of Python')+' · '+link('https://creativecommons.org/licenses/by-sa/4.0/','CC BY-SA 4.0')+'. '+link('https://lectures.scientific-python.org/','Scientific Python Lectures')+' · '+link('https://creativecommons.org/licenses/by/4.0/','CC BY 4.0')+'.</p>'
-    return page('Data Science для студентов',body)
 def library():
     body='<header class="library-head"><div class="eyebrow">'+link('index.html','Data Science')+' &nbsp;/&nbsp; Материалы курса</div><h1>Книжная полка</h1><p class="intro">Шесть книг для первых девяти занятий. Откройте нужную главу и попробуйте ответить на вопрос к ней в своём блокноте.</p></header>'
     body+='<nav aria-label="Книги" class="chapter-nav">'+''.join(link('#'+b['id'],b['title']) for b in books)+'</nav><div class="bookgrid">'
@@ -122,7 +105,7 @@ def library():
         cover=('<a href="'+e(b['url'])+'"><img src="'+e(b['cover'])+'" loading="lazy" referrerpolicy="no-referrer" alt="Обложка книги '+e(b['title'])+'"></a>') if b['cover'] else ''
         body+='<article class="book" id="'+e(b['id'])+'">'+cover+'<div class="smallcap">'+e(b['language'])+'</div><h2>'+link(b['url'],b['title'])+'</h2><div class="author">'+e(b['author'])+'</div>'+p(b['guide'])
         body+=reveal('Главы и вопросы для чтения',chapter_links([(b,ch) for ch in b['chapters']]))+link(b['url'],'Открыть книгу','book-link')+'</article>'
-    return page('Книжная полка',body+'</div><section class="home-book"><h2>Математическая полка</h2>'+p('Для самостоятельного чтения преподаватель собрал книги по матрицам, векторам и математическому анализу на русском и английском.')+link('materials.html#math','Открыть книги по математике','small-link')+'</section>')
+    return page('Книжная полка',body+'</div><section class="home-book"><h2>Математическая полка</h2>'+p('Для самостоятельного чтения преподаватель собрал книги по матрицам, векторам и математическому анализу на русском и английском.')+link('materials.html#math','Открыть книги по математике','small-link')+'</section>', active='books')
 GROUP_NOTEBOOK = 'https://drive.google.com/file/d/1xGwjMlmdmzJSehuUw6RHOLraQpyXxytF/view?usp=sharing'
 
 def resource_links(items):
@@ -130,11 +113,11 @@ def resource_links(items):
 
 def materials():
     body='<header class="library-head"><div class="eyebrow">От преподавателя</div><h1>Материалы группы</h1><p class="intro">Здесь собраны учебные ссылки из чата. Откройте папку своего занятия, выберите тренажёр или найдите книгу для самостоятельного чтения.</p></header>'
-    side='<aside class="rail"><div class="smallcap">Содержание</div>'+link('#group-drive','Папки занятий')+''.join(link('#'+g['id'],g['title']) for g in resources)+'</aside>'
+    side = section_menu([('group-drive','Папки занятий'), *((g['id'],g['title']) for g in resources)])
     folder_links=''.join('<li>'+link(url,f'Занятие {key} · '+course[int(key)-1]['title'])+'</li>' for key,url in folders.items())
     drive_section=section('group-drive','Папки занятий',p('В общей папке преподаватель собирает лекции и материалы группы. Ниже — прямые ссылки на папки конкретных встреч из объявлений курса.')+link(DRIVE,'Открыть общий Google Диск','btn primary')+'<ul class="folders">'+folder_links+'</ul>'+link(GROUP_NOTEBOOK,'Открыть блокнот вводной практики по Python'))
     blocks=''.join(section(g['id'],g['title'],p(g['intro'])+resource_links(g['items'])) for g in resources)
-    return page('Материалы группы',body+'<div class="layout">'+side+'<article class="reading">'+drive_section+blocks+'</article></div>')
+    return page('Материалы группы',body+'<div class="layout">'+side+'<article class="reading">'+drive_section+blocks+'</article></div>', active='materials')
 
 def book_text(item):
     attribution=link(item['source'],item['author']+' · '+item['book'])+' · '+link(item['license_url'],item['license'])
@@ -174,6 +157,7 @@ def main():
     for i,t in enumerate(course):
         lab_notebook(i,t)
         (BASE/lesson_url(i)).write_text(lesson(i,t),encoding='utf-8')
+    (BASE/CATALOG).write_text(catalog(course),encoding='utf-8')
     (BASE/'index.html').write_text(home(),encoding='utf-8')
     (BASE/'materials.html').write_text(materials(),encoding='utf-8')
     (BASE/'books.html').write_text(library(),encoding='utf-8')
