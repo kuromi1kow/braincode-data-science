@@ -1,5 +1,6 @@
 """Generate the buildless GitHub Pages edition from student-facing course sources."""
 from course_ui import CATALOG, DRIVE, catalog, section_menu, e, home, link, page
+from hashlib import sha256
 import json
 from pathlib import Path
 import re
@@ -154,13 +155,22 @@ def lab_notebook(i,topic):
 def main():
     assert len(course)==len(walks)==len(primers)==len(cases)
     (BASE/'lessons').mkdir(exist_ok=True)
-    for i,t in enumerate(course):
-        lab_notebook(i,t)
-        (BASE/lesson_url(i)).write_text(lesson(i,t),encoding='utf-8')
-    (BASE/CATALOG).write_text(catalog(course),encoding='utf-8')
-    (BASE/'index.html').write_text(home(),encoding='utf-8')
-    (BASE/'materials.html').write_text(materials(),encoding='utf-8')
-    (BASE/'books.html').write_text(library(),encoding='utf-8')
+    pages = {
+        'index.html': home(),
+        CATALOG: catalog(course),
+        'materials.html': materials(),
+        'books.html': library(),
+    }
+    for i, topic in enumerate(course):
+        lab_notebook(i, topic)
+        pages[lesson_url(i)] = lesson(i, topic)
+
+    # A shared version keeps navigation from mixing different cached editions of the header.
+    version = sha256('\0'.join(pages.values()).encode('utf-8')).hexdigest()[:12]
+    page_link = re.compile(r'( (?:href|data-moved-to)="(?:[\w.-]+/)*[\w.-]+\.html)(?=["#])')
+    for path, html in pages.items():
+        html = page_link.sub(rf'\g<1>?v={version}', html)
+        (BASE / path).write_text(html, encoding='utf-8')
 
 if __name__ == '__main__':
     main()
