@@ -3,19 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#184e55">
+  <meta id="dark-chrome" name="theme-color" content="#1b272b" media="screen and (prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="Учебник Data Science для студентов Tech Orda / BrainCode.">
   <title>Материалы группы · Tech Orda / BrainCode</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="assets/style.css">
-  <script src="assets/site.js" defer></script>
+  <link rel="stylesheet" href="assets/style.css?v=24119edc25ca">
+  <link id="dark-palette" rel="stylesheet" href="assets/dark.css?v=161d72ccf070" media="screen and (prefers-color-scheme: dark)">
+  <script src="assets/theme.js?v=840f034c2b8d"></script>
+  <script src="assets/site.js?v=9730c80c8783" defer></script>
 </head>
 <body data-page="materials">
   <a class="skip" href="#content">К содержанию</a>
   <header class="mast"><div class="wrap mast-inner">
     <a class="brand" href="index.html"><strong>BrainCode</strong><span class="partners">Astana Hub · Tech Orda</span></a>
     <nav aria-label="Навигация курса"><a href="index.html">Главная</a><a href="lessons/index.html">Программа</a><a href="books.html">Книги</a><a href="materials.html" aria-current="page">Материалы</a></nav>
+    <label class="theme-picker" title="Тема оформления" hidden>
+      <select id="theme-choice" aria-label="Тема оформления">
+        <option value="system">Как на устройстве</option>
+        <option value="light">Светлая</option>
+        <option value="dark">Тёмная</option>
+      </select>
+    </label>
   </div></header>
   <main id="content" class="wrap" tabindex="-1"><header class="library-head"><div class="eyebrow">От преподавателя</div><h1>Материалы группы</h1><p class="intro">Здесь собраны учебные ссылки из чата. Откройте папку своего занятия, выберите тренажёр или найдите книгу для самостоятельного чтения.</p></header><div class="layout"><aside class="rail"><details class="section-menu" open>
       <summary>Содержание</summary><nav aria-label="Содержание страницы"><a href="#group-drive">Папки занятий</a><a href="#install">Начало работы</a><a href="#practice-links">Задачи и видео</a><a href="#math">Математика для самостоятельного чтения</a><a href="#beyond">По желанию после занятия</a></nav>

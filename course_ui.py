@@ -1,6 +1,9 @@
 """Shared layout, landing page and lesson catalogue for GitHub Pages."""
 
+from functools import lru_cache
+from hashlib import sha256
 from html import escape
+from pathlib import Path
 
 DRIVE = "https://drive.google.com/drive/folders/1K83MMSPBBTlHrZSS0A0OPjuO8QI8KvS7"
 REPO = "https://github.com/kuromi1kow/braincode-data-science"
@@ -23,6 +26,12 @@ def link(url, label, cls="", *, download=False):
     return f'<a href="{e(url)}"{classes}{download_attr}>{e(label)}</a>'
 
 
+@lru_cache(maxsize=None)
+def asset_url(path):
+    content = (Path(__file__).resolve().parent / path).read_bytes()
+    return f"{path}?v={sha256(content).hexdigest()[:12]}"
+
+
 def page(title, body, *, active, depth="", description="Учебник Data Science для студентов Tech Orda / BrainCode."):
     home_url = depth + "index.html"
     nav = []
@@ -39,19 +48,29 @@ def page(title, body, *, active, depth="", description="Учебник Data Scie
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#184e55">
+  <meta id="dark-chrome" name="theme-color" content="#1b272b" media="screen and (prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="{e(description)}">
   <title>{e(title)} · Tech Orda / BrainCode</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="{depth}assets/fonts/fonts.css">
-  <link rel="stylesheet" href="{depth}assets/style.css">
-  <script src="{depth}assets/site.js" defer></script>
+  <link rel="stylesheet" href="{depth}{asset_url('assets/style.css')}">
+  <link id="dark-palette" rel="stylesheet" href="{depth}{asset_url('assets/dark.css')}" media="screen and (prefers-color-scheme: dark)">
+  <script src="{depth}{asset_url('assets/theme.js')}"></script>
+  <script src="{depth}{asset_url('assets/site.js')}" defer></script>
 </head>
 <body data-page="{active}">
   <a class="skip" href="#content">К содержанию</a>
   <header class="mast"><div class="wrap mast-inner">
     <a class="brand" href="{home_url}"><strong>BrainCode</strong><span class="partners">Astana Hub · Tech Orda</span></a>
     <nav aria-label="Навигация курса">{''.join(nav)}</nav>
+    <label class="theme-picker" title="Тема оформления" hidden>
+      <select id="theme-choice" aria-label="Тема оформления">
+        <option value="system">Как на устройстве</option>
+        <option value="light">Светлая</option>
+        <option value="dark">Тёмная</option>
+      </select>
+    </label>
   </div></header>
   <main id="content" class="wrap" tabindex="-1">{body}</main>
   <footer class="foot"><div class="wrap foot-inner">

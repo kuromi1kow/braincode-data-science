@@ -1,0 +1,26 @@
+:root {
+  color-scheme: dark;
+  --paper: #121b1e;
+  --surface: #1b272b;
+  --ink: #e4eeed;
+  --muted: #b1c2c4;
+  --line: #394b4f;
+  --blue: #9fc9f5;
+  --action: #95d9c9;
+  --on-action: #112b29;
+  --tint: #213936;
+  --focus: #ffc080;
+  --panel: #213034;
+  --field-border: #70888c;
+  --note-edge: #6da99c;
+  --check-bg: #232f3c;
+  --check-edge: #7f9dbb;
+  --excerpt-bg: #302e40;
+  --excerpt-edge: #aaa1cc;
+  --code-bg: #10191f;
+  --code-bar: #26363c;
+  --code-fg: #e5eff4;
+  --output-bg: #223038;
+  --inline-bg: #2a393c;
+  --demo-bg: #1c302e;
+}
