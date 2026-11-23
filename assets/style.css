@@ -69,13 +69,20 @@ button:disabled { opacity: .55; cursor: default; }
 /* Shared navigation */
 .mast { background: var(--surface); border-bottom: 1px solid var(--line); }
 .mast-inner, .foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; }
-.mast-inner { min-height: 4.6rem; column-gap: 1rem; }
-.mast-inner > nav { margin-inline-start: auto; }
+.mast-inner { min-height: 4.6rem; column-gap: 0; }
+.mast-inner > nav { display: flex; align-self: stretch; margin-inline-start: auto; }
 .mast .theme-toggle {
-  flex: none; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 50%;
-  color: var(--ink); border-color: var(--field-border); background: var(--surface);
+  position: relative; isolation: isolate; align-self: stretch; flex: none;
+  width: 56px; min-height: 52px; padding: 0; border: 0; border-radius: 0;
+  color: var(--ink); background: transparent; box-shadow: none;
   font: 1.6rem/1 "Apple Symbols", "Segoe UI Symbol", sans-serif;
 }
+.mast .theme-toggle::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  width: 42px; height: 42px; border: 1px solid var(--field-border); border-radius: 50%;
+}
+.mast .theme-toggle:hover { box-shadow: none; }
+.mast .theme-toggle:hover::before { background: var(--tint); border-color: var(--action); }
 .theme-toggle .theme-sun, .theme-toggle[aria-pressed="true"] .theme-moon { display: none; }
 .theme-toggle[aria-pressed="true"] .theme-sun { display: block; color: var(--action); }
 .foot .theme-system {
@@ -86,9 +93,18 @@ button:disabled { opacity: .55; cursor: default; }
 .brand { display: inline-flex; align-items: center; gap: .85rem; text-decoration: none; color: var(--ink); }
 .brand strong { font: 650 1.4rem/1 var(--heading); letter-spacing: -.045em; }
 .partners { border-left: 1px solid var(--line); padding-left: .85rem; font-size: .93rem; font-weight: 500; color: var(--muted); white-space: nowrap; }
-.mast nav, .foot nav { display: flex; align-items: center; flex-wrap: wrap; gap: .25rem; }
-.mast nav a { padding: .5rem .78rem; border-radius: .45rem; text-decoration: none; color: var(--muted); font-size: .95rem; font-weight: 550; }
-.mast nav a[aria-current] { color: var(--action); background: var(--tint); }
+.foot nav { display: flex; align-items: center; flex-wrap: wrap; gap: .25rem; }
+.mast nav a {
+  position: relative; isolation: isolate; display: flex; flex: 1 0 auto;
+  align-items: center; justify-content: center; min-height: 52px; padding: .5rem clamp(.65rem, 1.3vw, 1.25rem);
+  text-decoration: none; color: var(--muted); font-size: .95rem; font-weight: 550;
+}
+.mast nav a:is([aria-current], :hover, :focus-visible) { color: var(--action); }
+.mast nav a:is([aria-current], :hover, :focus-visible)::before {
+  content: ""; position: absolute; inset: .45rem .12rem; z-index: -1; pointer-events: none;
+  border-radius: .45rem; background: var(--tint);
+}
+.mast :is(nav a, .theme-toggle):focus-visible { outline-offset: -4px; }
 .mast nav a:hover, .foot a:hover { color: var(--action); text-decoration: underline; }
 .foot { border-top: 1px solid var(--line); }
 .foot-inner { padding-block: 1.35rem; flex-wrap: wrap; }
@@ -212,13 +228,13 @@ pre, code { font-family: var(--mono); }
 
 @media (max-width: 800px) {
   .mast-inner {
-    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .45rem .5rem;
-    grid-template-areas: "brand theme" "nav nav"; padding-block: .6rem .45rem;
+    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 0; width: 100%;
+    grid-template-areas: "brand theme" "nav nav"; padding-block: .4rem 0;
   }
-  .mast .brand { grid-area: brand; }
-  .mast .theme-toggle { grid-area: theme; }
+  .mast .brand { grid-area: brand; margin-inline-start: clamp(1.125rem, 4vw, 4rem); }
+  .mast .theme-toggle { grid-area: theme; margin-inline-end: clamp(.75rem, 3vw, 3rem); }
   .mast-inner > nav { grid-area: nav; margin: 0; }
-  .mast nav a { padding: .45rem .65rem; }
+  .mast nav a { padding: .45rem .25rem; }
   .hero { gap: 1.65rem; }
   .layout { grid-template-columns: minmax(0,1fr); gap: 1.35rem; padding-top: 1rem; }
   .reading { margin-inline: auto; }
@@ -226,8 +242,7 @@ pre, code { font-family: var(--mono); }
   .section-menu { background: var(--surface); border: 1px solid var(--line); padding: .75rem 1rem; border-radius: .55rem; }
 }
 @media (max-width: 640px) {
-  .mast nav { gap: .05rem; justify-content: space-between; }
-  .mast nav a { font-size: .89rem; padding: .45rem .5rem; }
+  .mast nav a { font-size: .89rem; }
   .brand { gap: .65rem; }
   .partners { padding-left: .65rem; font-size: .88rem; }
   .hero { grid-template-columns: minmax(0,1fr); gap: 1.6rem; padding: 2.45rem 0; }
