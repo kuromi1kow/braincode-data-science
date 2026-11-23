@@ -4,34 +4,51 @@
   const palette = document.getElementById("dark-palette");
   const chromeColor = document.getElementById("dark-chrome");
   const systemMedia = palette.media;
-  let choice;
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+  let preference;
+  let toggle, systemButton;
 
   function savedChoice() {
     try { return localStorage.getItem(key); } catch { return null; }
   }
 
-  function apply(value) {
-    const theme = value === "dark" || value === "light" ? value : "system";
-    const media = theme === "system" ? systemMedia : theme === "dark" ? "screen" : "not all";
-    palette.media = media;
-    chromeColor.media = media;
-    if (choice) choice.value = theme;
+  function isDark() {
+    return preference === "dark" || (preference === "system" && systemDark.matches);
   }
 
-  // Apply the palette before the body is painted. System mode follows OS changes through CSS.
+  function updateButtons() {
+    if (!toggle) return;
+    const dark = isDark();
+    toggle.setAttribute("aria-pressed", String(dark));
+    toggle.title = dark ? "Включить светлую тему" : "Включить тёмную тему";
+    systemButton.setAttribute("aria-pressed", String(preference === "system"));
+  }
+
+  function apply(value) {
+    preference = value === "dark" || value === "light" ? value : "system";
+    const media = preference === "system" ? systemMedia : preference === "dark" ? "screen" : "not all";
+    palette.media = media;
+    chromeColor.media = media;
+    updateButtons();
+  }
+
+  function choose(value) {
+    apply(value);
+    try {
+      if (value === "system") localStorage.removeItem(key);
+      else localStorage.setItem(key, value);
+    } catch { /* The choice still applies to this page. */ }
+  }
+
   apply(savedChoice());
   document.addEventListener("DOMContentLoaded", () => {
-    choice = document.getElementById("theme-choice");
-    apply(savedChoice());
-    choice.closest("label").hidden = false;
-    choice.addEventListener("change", () => {
-      apply(choice.value);
-      try {
-        if (choice.value === "system") localStorage.removeItem(key);
-        else localStorage.setItem(key, choice.value);
-      } catch { /* The current page still uses the selected palette. */ }
-    });
+    toggle = document.getElementById("theme-toggle");
+    systemButton = document.getElementById("theme-system");
+    updateButtons();
+    toggle.addEventListener("click", () => choose(isDark() ? "light" : "dark"));
+    systemButton.addEventListener("click", () => choose("system"));
   });
+  systemDark.addEventListener("change", updateButtons);
   window.addEventListener("storage", event => {
     if (event.key === key || event.key === null) apply(savedChoice());
   });

@@ -56,6 +56,7 @@ def page(title, body, *, active, depth="", description="Учебник Data Scie
   <link rel="stylesheet" href="{depth}assets/fonts/fonts.css">
   <link rel="stylesheet" href="{depth}{asset_url('assets/style.css')}">
   <link id="dark-palette" rel="stylesheet" href="{depth}{asset_url('assets/dark.css')}" media="screen and (prefers-color-scheme: dark)">
+  <noscript><style>.theme-toggle, .theme-system {{ display: none; }}</style></noscript>
   <script src="{depth}{asset_url('assets/theme.js')}"></script>
   <script src="{depth}{asset_url('assets/site.js')}" defer></script>
 </head>
@@ -64,18 +65,14 @@ def page(title, body, *, active, depth="", description="Учебник Data Scie
   <header class="mast"><div class="wrap mast-inner">
     <a class="brand" href="{home_url}"><strong>BrainCode</strong><span class="partners">Astana Hub · Tech Orda</span></a>
     <nav aria-label="Навигация курса">{''.join(nav)}</nav>
-    <label class="theme-picker" title="Тема оформления" hidden>
-      <select id="theme-choice" aria-label="Тема оформления">
-        <option value="system">Как на устройстве</option>
-        <option value="light">Светлая</option>
-        <option value="dark">Тёмная</option>
-      </select>
-    </label>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Тёмная тема" aria-pressed="false" title="Переключить тему">
+      <span aria-hidden="true" class="theme-moon">☾</span><span aria-hidden="true" class="theme-sun">☀︎</span>
+    </button>
   </div></header>
   <main id="content" class="wrap" tabindex="-1">{body}</main>
   <footer class="foot"><div class="wrap foot-inner">
     <p><strong>Data Science</strong> · Assylkhan Geniyat</p>
-    <nav aria-label="Ресурсы курса">{link(depth + CATALOG, 'Программа')}{link(DRIVE, 'Google Диск')}{link(REPO, 'GitHub')}</nav>
+    <nav aria-label="Ресурсы курса">{link(depth + CATALOG, 'Программа')}{link(DRIVE, 'Google Диск')}{link(REPO, 'GitHub')}<button class="theme-system" id="theme-system" type="button" aria-pressed="true">Тема как на устройстве</button></nav>
   </div></footer>
 </body></html>"""
 
