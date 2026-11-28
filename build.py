@@ -1,6 +1,7 @@
 """Generate the buildless GitHub Pages edition from student-facing course sources."""
 from course_ui import CATALOG, DRIVE, catalog, section_menu, e, home, link, page
 from hashlib import sha256
+import csv
 import json
 from pathlib import Path
 import re
@@ -45,16 +46,34 @@ def setup(i):
     if i==8:
         return '<div class="notes">'+p('В Colab подключите обычную среду Python и выполните import numpy as np. Если запускаете Jupyter локально и NumPy отсутствует, выполните %pip install numpy в отдельной ячейке этого блокнота.')+'</div>'
     return ''
+def dataset_details(filename):
+    with (BASE / 'data' / filename).open(encoding='utf-8', newline='') as data:
+        header, *rows = csv.reader(data)
+    columns = ''.join('<th scope="col">' + e(col) + '</th>' for col in header)
+    body = ''.join('<tr>' + ''.join('<td>' + (e(value) if value else '—') + '</td>' for value in row) + '</tr>' for row in rows)
+    table = ('<div class="scroll-table"><table><caption>' + e(filename) + ' · строк: ' + str(len(rows))
+             + '</caption><thead><tr>' + columns + '</tr></thead><tbody>' + body + '</tbody></table></div>')
+    return ('<div class="notes">' + link('../data/' + filename, 'Скачать ' + filename, 'btn', download=True)
+            + p('В Colab данные уже встроены в первую ячейку чтения. Для работы локально положите CSV рядом с блокнотом. '
+                'Вам понадобятся Jupyter и pandas. При необходимости установите библиотеку в ячейке командой `%pip install pandas`.')
+            + reveal('Посмотреть исходные строки', table + p('Тире в таблице обозначает пустое поле CSV.')) + '</div>')
+
+
 def lesson(i,t):
     case=cases[f'{i:02}']; primer=primers[i]; num=i+1
     assignment = t.get('exercise_collection')
     homework_link = link('#numpy-homework', 'ДЗ · 100 упражнений', 'btn') if assignment else ''
+    homework_nb = t.get('homework_notebook')
+    if homework_nb:
+        homework_link = link('#homework', 'К домашней работе', 'btn')
     body='<header class="lesson-head"><div class="eyebrow">'+link('index.html','Программа')+f' &nbsp;/&nbsp; Занятие {num:02}</div><h1>'+e(t['title'])+'</h1><p class="intro">'+e(t['summary'])+'</p><div class="actions">'+link(COLAB+t['notebook'],'Открыть в Colab','btn primary')+link('#practice','К практике','btn')+homework_link+'</div></header>'
     titles=[('start','С чего начать'),('book-text','Из книги'),('case','Разбор задачи'),('deeper','Подробный разбор'),('code','Код по шагам'),('workshop','Лаборатория'),('practice','Практика и ДЗ'),('quiz','Самопроверка'),('reading','Что почитать')]
     if assignment:
         titles.insert(-2, ('numpy-homework', 'ДЗ · 100 упражнений'))
     nav = section_menu(titles, reader=True)
     start=p(t['why'])+'<h3>'+e(primer[0])+'</h3>'+p(primer[1])+p(primer[2])+'<dl>'+''.join('<dt class="term">'+e(primer[j])+'</dt><dd>'+prose(primer[j+1])+'</dd>' for j in (3,5,7))+'</dl>'+setup(i)
+    if t.get('dataset'):
+        start += dataset_details(t['dataset'])
     body+='<div class="layout">'+nav+'<article class="reading">'+section('start','С чего начать',start)
     body+=section('book-text','Читаем фрагмент книги',book_text(excerpts[str(num)]))
     body+=section('case',case['title'],''.join(p(x) for x in case['paragraphs'])+'<div class="notes"><strong>Проверьте рассуждение</strong>'+p(case['challenge'])+reveal('Сверить ответ',p(case['answer']))+'</div>')
@@ -73,7 +92,12 @@ def lesson(i,t):
     body+=section('code','Код по шагам',p('Перед запуском прочитайте пример и запишите, что появится на экране. Затем откройте вывод под кодом и сравните со своим ответом.')+samples+simulator(i))
     body+=section('workshop','Лаборатория · '+labs[str(num)]['title'],workshop(num,t))
     demo=''.join(p(x) for x in t['example'])+code(t['code'])+p(t['explain'])
-    practice='<h3>Пример из блокнота</h3>'+demo+'<h3>Работа на занятии</h3>'+listing(t['practice'],'ol')+'<h3>Домашнее задание</h3>'+listing(t['homework'],'ol')+p('Сохраните блокнот с выполненными ячейками, проверочными примерами и коротким выводом своими словами.')+'<div class="actions">'+link(COLAB+t['notebook'],'Открыть практику в Colab','btn primary')+link('../notebooks/'+t['notebook'],'Скачать .ipynb','btn')+link(DRIVE,'Материалы на Google Диске','btn')+'</div>'
+    homework_title = '<h3 id="homework">Домашнее задание</h3>' if homework_nb else '<h3>Домашнее задание</h3>'
+    practice = '<h3>Пример из блокнота</h3>' + demo + '<h3>Работа на занятии</h3>' + listing(t['practice'], 'ol')
+    practice += homework_title + listing(t['homework'], 'ol') + p('Сохраните блокнот с выполненными ячейками, проверочными примерами и коротким выводом своими словами.')
+    if homework_nb:
+        practice += '<div class="actions">' + link(COLAB + homework_nb, 'Решать домашнюю работу в Colab', 'btn primary') + link('../notebooks/' + homework_nb, 'Скачать тетрадь для сдачи', 'btn', download=True) + '</div>'
+    practice += '<div class="actions">' + link(COLAB+t['notebook'],'Открыть практику в Colab','btn primary') + link('../notebooks/'+t['notebook'],'Скачать .ipynb','btn') + link(DRIVE,'Материалы на Google Диске','btn') + '</div>'
     if str(num) in folders:
         practice+='<div class="actions">'+link(folders[str(num)],f'Папка занятия {num} на Диске','btn')+'</div>'
     if num==2:
@@ -100,7 +124,7 @@ def lesson(i,t):
     return page(t['title'],body+'<nav class="pager" aria-label="Между занятиями">'+prev+nxt+'</nav></article></div>',active='lesson',depth='../',description=t['summary'])
 
 def library():
-    body='<header class="library-head"><div class="eyebrow">'+link('index.html','Data Science')+' &nbsp;/&nbsp; Материалы курса</div><h1>Книжная полка</h1><p class="intro">Шесть книг для первых девяти занятий. Откройте нужную главу и попробуйте ответить на вопрос к ней в своём блокноте.</p></header>'
+    body='<header class="library-head"><div class="eyebrow">'+link('index.html','Data Science')+' &nbsp;/&nbsp; Материалы курса</div><h1>Книжная полка</h1><p class="intro">Книги по Python, NumPy и pandas. Откройте нужную главу и попробуйте ответить на вопрос к ней в своём блокноте.</p></header>'
     body+='<nav aria-label="Книги" class="chapter-nav">'+''.join(link('#'+b['id'],b['title']) for b in books)+'</nav><div class="bookgrid">'
     for b in books:
         cover=('<a href="'+e(b['url'])+'"><img src="'+e(b['cover'])+'" loading="lazy" referrerpolicy="no-referrer" alt="Обложка книги '+e(b['title'])+'"></a>') if b['cover'] else ''

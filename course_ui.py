@@ -86,7 +86,7 @@ def home():
       <div class="hero-copy">
         <p class="eyebrow">Учебник для студентов</p>
         <h1>Data <span>Science</span></h1>
-        <p class="intro">От первого вопроса к данным до расчётов на Python и NumPy. Разбирайте примеры и проверяйте свои решения в Google Colab.</p>
+        <p class="intro">От первого вопроса к данным до анализа таблиц с NumPy и pandas на Python. Разбирайте примеры и проверяйте свои решения в Google Colab.</p>
         <div class="actions">{anchors}{link(CATALOG, 'Открыть программу', 'btn primary')}</div>
       </div>
       <img class="hero-photo" src="assets/study.jpg" width="1200" height="800"
@@ -97,10 +97,10 @@ def home():
       <a href="materials.html"><strong>Материалы группы</strong><span>Папки занятий, установка Python и дополнительные упражнения.</span></a>
     </nav>
     <p class="attribution">В уроках используются отрывки из
-      {link('https://python.swaroopch.com/', 'A Byte of Python')} (Swaroop Chitlur)
-      ({link('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}) и
+      {link('https://python.swaroopch.com/', 'A Byte of Python')} (Swaroop Chitlur, {link('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}),
       {link('https://lectures.scientific-python.org/', 'Scientific Python Lectures')}
-      ({link('https://creativecommons.org/licenses/by/4.0/', 'CC BY 4.0')}).</p>"""
+      и {link('https://swcarpentry.github.io/python-novice-gapminder/07-reading-tabular.html', 'Plotting and Programming in Python')} (The Carpentries).
+      Для двух последних источников действует {link('https://creativecommons.org/licenses/by/4.0/', 'CC BY 4.0')}.</p>"""
     return page("Data Science для студентов", body, active="home")
 
 

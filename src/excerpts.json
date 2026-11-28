@@ -122,5 +122,18 @@
     ],
     "translation": "Операция среза создаёт представление исходного массива. Это способ обратиться к данным самого массива.",
     "note": "Возьмите a = np.array([7, 8, 9]) и b = a[1:]. Если присвоить b[0] = 50, то a станет [7, 50, 9]. Начало b совпадает с позицией 1 в исходных данных. Теперь повторите опыт с b = a[1:].copy(): у копии своя память, поэтому замена в b не затронет a."
+  },
+  "10": {
+    "title": "Почему в одной таблице уживаются номера, города и цены",
+    "book": "Plotting and Programming in Python · Reading Tabular Data into DataFrames",
+    "author": "Software Carpentry / The Carpentries",
+    "source": "https://swcarpentry.github.io/python-novice-gapminder/07-reading-tabular.html",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "original": [
+      "A 2-dimensional table whose columns have names and potentially have different data types."
+    ],
+    "translation": "Двумерная таблица, у которой столбцы имеют имена и могут иметь разные типы данных.",
+    "note": "Посмотрите на первые три поля CSV. Номер 001 внешне похож на число, но ведущие нули важны для поиска заказа. Дату удобно сравнивать по времени, а город — по названию. Назначьте номеру строковый тип ещё во время чтения и проверьте остальные типы через `orders.dtypes`."
   }
 }

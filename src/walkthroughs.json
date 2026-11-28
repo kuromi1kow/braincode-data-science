@@ -205,5 +205,35 @@
       "output": "(2, 3)\n[7, 9]\n[5, 4, 7]",
       "explain": "Форма (2, 3) говорит о двух строках и трёх столбцах. При axis=1 исчезает ось столбцов, поэтому первая сумма равна 2 + 4 + 1 и остаётся одно число на день. При axis=0 складываются дни внутри каждого столбца, поэтому для первого товара получаем 2 + 3."
     }
+  ],
+  [
+    {
+      "title": "Как оставить нули в номере заказа?",
+      "intro": "Прочитаем две строки CSV из памяти. Тот же вызов принимает путь к скачанному файлу.",
+      "code": "from io import StringIO\nimport pandas as pd\n\ntext = \"order_id,city,qty\\n001,Алматы,2\\n010,Астана,1\\n\"\norders = pd.read_csv(StringIO(text), dtype={\"order_id\": \"string\"})\nprint(orders.shape)\nprint(orders[\"order_id\"].tolist())",
+      "output": "(2, 3)\n['001', '010']",
+      "explain": "Кортеж (2, 3) означает две строки и три столбца. Тип номера указан до чтения, поэтому 001 и 010 сохранились в исходном виде."
+    },
+    {
+      "title": "Как выбрать заказ по метке и по его позиции?",
+      "intro": "Посмотрите, какое имя города вернёт каждый способ после отбора.",
+      "code": "import pandas as pd\n\ncities = pd.Series([\"Алматы\", \"Астана\", \"Шымкент\"], index=[\"001\", \"002\", \"004\"])\nfiltered = cities.loc[cities.ne(\"Астана\")]\nprint(filtered.index.tolist())\nprint(filtered.loc[\"004\"])\nprint(filtered.iloc[0])",
+      "output": "['001', '004']\nШымкент\nАлматы",
+      "explain": "Вызов loc ищет номер 004, даже если записи переставить местами. Вызов iloc вернул первый город из текущего порядка."
+    },
+    {
+      "title": "Какие заказы требуют уточнения?",
+      "intro": "Нулевая цена подарка и отсутствующая цена по-разному влияют на список полных записей.",
+      "code": "import pandas as pd\n\nprices = pd.Series([\"500\", \"уточнить\", None, \"0\"], index=[\"001\", \"006\", \"008\", \"010\"])\namounts = pd.to_numeric(prices, errors=\"coerce\")\nprint(amounts.index[amounts.isna()].tolist())\nprint(amounts.index[amounts.eq(0)].tolist())",
+      "output": "['006', '008']\n['010']",
+      "explain": "В первом результате два номера с неизвестной ценой. Во втором — заказ с установленной нулевой ценой."
+    },
+    {
+      "title": "Сколько заказов стоит за суммой?",
+      "intro": "Перед группировкой найдите на бумаге число покупок и средний чек для каждого города.",
+      "code": "import pandas as pd\n\npaid = pd.DataFrame({\n    \"city\": [\"Алматы\", \"Астана\", \"Алматы\"],\n    \"order_id\": [\"001\", \"002\", \"007\"],\n    \"revenue_kzt\": [1000, 8000, 700],\n})\nreport = paid.groupby(\"city\").agg(\n    orders=(\"order_id\", \"nunique\"), revenue=(\"revenue_kzt\", \"sum\")\n)\nreport[\"mean_check\"] = report[\"revenue\"] / report[\"orders\"]\nfor city, row in report.sort_values(\"revenue\", ascending=False).iterrows():\n    print(city, int(row[\"orders\"]), int(row[\"revenue\"]), int(row[\"mean_check\"]))",
+      "output": "Астана 1 8000 8000\nАлматы 2 1700 850",
+      "explain": "Это маленькая выборка из трёх заказов для проверки формулы. Две покупки Алматы дают чек 850 ₸ в среднем. Сортировка меняет порядок строк отчёта и сохраняет суммы."
+    }
   ]
 ]
